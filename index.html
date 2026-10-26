@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Mi Semana">
+<meta name="theme-color" content="#0e0f0c">
+<title>Mi Semana</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Barlow+Condensed:wght@500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0e0f0c; --ink:#f1f0ea; --mute:#7d7e74; --line:#262722; --cell:#17181430;
+  --lime:#d4ff3a; --red:#ff5a3c; --dim:#1c1d19;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{background:var(--bg);color:var(--ink)}
+body{font-family:'Barlow Condensed',sans-serif;max-width:560px;margin:0 auto;
+  padding:calc(env(safe-area-inset-top) + 18px) 16px calc(env(safe-area-inset-bottom) + 40px);
+  -webkit-user-select:none;user-select:none}
+.mono{font-family:'JetBrains Mono',monospace}
+button{font-family:'Barlow Condensed',sans-serif;border-radius:0;cursor:pointer;touch-action:manipulation}
+
+/* Cabecera */
+.top{display:flex;justify-content:space-between;align-items:baseline;
+  font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
+.top b{color:var(--lime);font-weight:600}
+.hero{display:grid;grid-template-columns:1fr auto;align-items:end;margin-top:10px;border-bottom:2px solid var(--ink);padding-bottom:12px}
+.hero h1{font-family:'Archivo Black',sans-serif;font-size:46px;line-height:.9;text-transform:uppercase;letter-spacing:-.01em}
+.hero h1 span{color:var(--lime)}
+.score{font-family:'Archivo Black',sans-serif;font-size:76px;line-height:.8;text-align:right}
+.score small{font-size:28px}
+.days{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-top:12px}
+.days div{font-family:'JetBrains Mono',monospace;font-size:10px;text-align:center;padding:6px 0;background:var(--dim);color:var(--mute)}
+.days div.past{background:#2b2c26;color:var(--ink)}
+.days div.now{background:var(--lime);color:#0e0f0c;font-weight:600}
+
+/* Bloques */
+.blk{margin-top:26px}
+.lab{display:flex;justify-content:space-between;align-items:baseline;font-size:15px;font-weight:600;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--mute);margin-bottom:10px}
+.lab .st{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.05em}
+.lab .ok{color:var(--lime)} .lab .bad{color:var(--red)}
+
+/* Estudio */
+.study{border:1.5px solid var(--line);padding:16px}
+.study .n{font-family:'Archivo Black',sans-serif;font-size:58px;line-height:.85}
+.study .n span{font-size:24px;color:var(--mute)}
+.bar{height:12px;background:var(--dim);margin:14px 0 14px;position:relative;overflow:hidden}
+.bar i{position:absolute;inset:0 auto 0 0;background:var(--lime);transition:width .3s}
+.bar::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 calc(100%/18 - 2px),var(--bg) calc(100%/18 - 2px) calc(100%/18))}
+.btns{display:grid;grid-template-columns:52px 1fr 1fr 1fr;gap:6px}
+.btns button{height:46px;font-size:20px;font-weight:700;background:transparent;color:var(--ink);border:1.5px solid var(--ink)}
+.btns button.m{border-color:var(--line);color:var(--mute)}
+.btns button:active{background:var(--lime);color:#0e0f0c}
+
+/* Filas check */
+.chk{display:grid;grid-template-columns:1fr 54px;align-items:center;border-top:1px solid var(--line);padding:12px 0;width:100%;
+  background:none;border-left:none;border-right:none;border-bottom:none;color:var(--ink);text-align:left}
+.chk:last-child{border-bottom:1px solid var(--line)}
+.chk .t{font-size:24px;font-weight:700;text-transform:uppercase;line-height:1}
+.chk .s{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--mute);margin-top:5px}
+.chk .s.hot{color:var(--lime)}
+.chk .box{width:44px;height:44px;border:2px solid var(--ink);justify-self:end;display:grid;place-items:center;
+  font-family:'Archivo Black',sans-serif;font-size:22px;color:#0e0f0c}
+.chk.on .box{background:var(--lime);border-color:var(--lime)}
+.chk.on .t{color:var(--lime)}
+
+/* Gym */
+.gym{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.g{aspect-ratio:1/1.05;border:1.5px solid var(--ink);background:transparent;color:var(--ink);
+  display:flex;flex-direction:column;justify-content:space-between;padding:10px;text-align:left}
+.g .d{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--mute)}
+.g .w{font-size:21px;font-weight:700;text-transform:uppercase;line-height:1}
+.g.on{background:var(--lime);border-color:var(--lime);color:#0e0f0c}
+.g.on .d{color:#0e0f0c}
+
+/* Cheat */
+.cheat{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;border:1.5px solid var(--line);padding:14px}
+.slots{display:flex;gap:8px}
+.slot{width:38px;height:38px;border:2px dashed var(--mute)}
+.slot.used{border:2px solid var(--ink);background:var(--ink)}
+.slot.over{border:2px solid var(--red);background:var(--red)}
+.cheat .msg{grid-column:1/3;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--mute)}
+.cheat .msg.bad{color:var(--red)}
+.cb{display:flex;gap:6px}
+.cb button{height:42px;padding:0 14px;font-size:18px;font-weight:700;background:transparent;color:var(--ink);border:1.5px solid var(--ink)}
+.cb button.m{border-color:var(--line);color:var(--mute);width:44px;padding:0}
+
+/* Peso */
+.kg{border:1.5px solid var(--line);padding:14px}
+.kg .head{display:flex;justify-content:space-between;align-items:flex-end}
+.kg .now{font-family:'Archivo Black',sans-serif;font-size:40px;line-height:.85}
+.kg .now span{font-size:18px;color:var(--mute)}
+.kg .dl{font-family:'JetBrains Mono',monospace;font-size:12px;text-align:right;color:var(--mute);line-height:1.5}
+.kg .dl b{color:var(--ink)}
+.kg svg{display:block;width:100%;height:80px;margin-top:12px;overflow:visible}
+.kg .ax{display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--mute);margin-top:6px}
+
+/* Historial */
+.hist{display:flex;gap:6px;align-items:flex-end;height:90px;border-bottom:1px solid var(--line)}
+.hist .c{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%;gap:4px}
+.hist .c i{display:block;width:100%;background:#3a3b34}
+.hist .c.good i{background:var(--lime)}
+.hist .c span{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--mute)}
+.hl{display:flex;gap:6px;margin-top:5px}
+.hl span{flex:1;text-align:center;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--mute)}
+.empty{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--mute);padding:14px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+
+.foot{margin-top:30px;display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--mute)}
+.foot button{background:none;border:none;color:var(--mute);text-decoration:underline;font-family:inherit;font-size:11px}
+</style>
+</head>
+<body>
+
+<div class="top"><span id="wk"></span><span id="rng"></span></div>
+<div class="hero">
+  <h1>Mi<br><span>semana</span></h1>
+  <div class="score" id="score">0<small>%</small></div>
+</div>
+<div class="days" id="days"></div>
+
+<div class="blk">
+  <div class="lab">Estudio <span class="st" id="stSt"></span></div>
+  <div class="study">
+    <div class="n" id="hrs">0<span> / 18 h</span></div>
+    <div class="bar"><i id="hbar"></i></div>
+    <div class="btns">
+      <button class="m" data-h="-0.5">−</button>
+      <button data-h="0.5">+½ h</button>
+      <button data-h="1">+1 h</button>
+      <button data-h="2">+2 h</button>
+    </div>
+  </div>
+</div>
+
+<div class="blk">
+  <div class="lab">Gimnasio <span class="st" id="gymSt"></span></div>
+  <div class="gym" id="gym"></div>
+</div>
+
+<div class="blk">
+  <div class="lab">Hábitos <span class="st" id="habSt"></span></div>
+  <div id="habs"></div>
+</div>
+
+<div class="blk" id="kgBlk">
+  <div class="lab">Peso <span class="st" id="kgSt"></span></div>
+  <div class="kg" id="kg"></div>
+</div>
+
+<div class="blk">
+  <div class="lab">Cheat meals <span class="st" id="chSt"></span></div>
+  <div class="cheat">
+    <div class="slots" id="slots"></div>
+    <div class="cb"><button class="m" data-c="-1">−</button><button data-c="1">+ CHEAT</button></div>
+    <div class="msg" id="chMsg"></div>
+  </div>
+</div>
+
+<div class="blk">
+  <div class="lab">Semanas anteriores</div>
+  <div id="hist"></div>
+</div>
+
+<div class="foot"><span>Se reinicia sola cada lunes</span><button id="reset">Reiniciar semana</button></div>
+
+<script>
+const KEY='mi-semana-v1', GOAL=18, MAXCHEAT=2;
+const GYM=[{id:'pb',w:'Pecho<br>+ Bíceps',d:'Día 1'},{id:'et',w:'Espalda<br>+ Tríceps',d:'Día 2'},{id:'ho',w:'Hombro',d:'Día 3'}];
+const HABS=[
+  {id:'peso', t:'Pesarse', s:'Los lunes', day:1},
+  {id:'abs',  t:'Abdominales', s:'Al menos una vez esta semana'},
+  {id:'ctrl', t:'Control · abstinencia', s:'Domingo a última hora', day:0},
+];
+
+/* semana ISO (lunes-domingo) */
+function weekInfo(date=new Date()){
+  const d=new Date(date.getFullYear(),date.getMonth(),date.getDate());
+  const dow=(d.getDay()+6)%7; // 0 = lunes
+  const mon=new Date(d); mon.setDate(d.getDate()-dow);
+  const t=new Date(mon); t.setDate(mon.getDate()+3);
+  const y=t.getFullYear(), j=new Date(y,0,4);
+  const n=1+Math.round(((t-j)/864e5-3+((j.getDay()+6)%7))/7);
+  return {key:`${y}-W${String(n).padStart(2,'0')}`, n, mon, dow};
+}
+const blank=()=>({h:0,gym:{},hab:{},cheat:0});
+
+let st={week:null,d:blank(),hist:[],kg:[]};
+try{const s=JSON.parse(localStorage.getItem(KEY)); if(s) st=Object.assign(st,s);}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(st));}catch(e){}}
+
+function pct(d){
+  let u=Math.min(d.h/GOAL,1);
+  u+=GYM.filter(g=>d.gym[g.id]).length;
+  u+=HABS.filter(h=>d.hab[h.id]).length;
+  return Math.round(u/(1+GYM.length+HABS.length)*100);
+}
+
+/* reinicio automático */
+function rollover(){
+  const w=weekInfo();
+  if(st.week && st.week!==w.key){
+    st.hist.push({w:st.week,p:pct(st.d),h:st.d.h,c:st.d.cheat});
+    st.hist=st.hist.slice(-12);
+    st.d=blank();
+  }
+  st.week=w.key; save();
+}
+
+const fmtKg=v=>(Math.round(v*10)/10).toFixed(1).replace('.',',');
+const fmtH=h=>(h%1?h.toFixed(1).replace('.',','):h);
+const fd=d=>d.toLocaleDateString('es-ES',{day:'numeric',month:'short'}).replace('.','');
+
+function render(){
+  const w=weekInfo(), d=st.d, p=pct(d);
+  const sun=new Date(w.mon); sun.setDate(w.mon.getDate()+6);
+  document.getElementById('wk').innerHTML=`Semana <b>${w.n}</b>`;
+  document.getElementById('rng').textContent=`${fd(w.mon)} – ${fd(sun)}`;
+  document.getElementById('score').innerHTML=p+'<small>%</small>';
+  document.getElementById('days').innerHTML=['L','M','X','J','V','S','D']
+    .map((x,i)=>`<div class="${i<w.dow?'past':i===w.dow?'now':''}">${x}</div>`).join('');
+
+  // estudio
+  document.getElementById('hrs').innerHTML=`${fmtH(d.h)}<span> / ${GOAL} h</span>`;
+  document.getElementById('hbar').style.width=Math.min(d.h/GOAL*100,100)+'%';
+  const left=Math.max(GOAL-d.h,0), daysLeft=7-w.dow;
+  const ss=document.getElementById('stSt');
+  ss.className='st'+(d.h>=GOAL?' ok':'');
+  ss.textContent=d.h>=GOAL?'OBJETIVO ✓':`faltan ${fmtH(left)} h · ${fmtH(Math.round(left/daysLeft*10)/10)} h/día`;
+
+  // gym
+  const gDone=GYM.filter(g=>d.gym[g.id]).length;
+  document.getElementById('gym').innerHTML=GYM.map(g=>
+    `<button class="g ${d.gym[g.id]?'on':''}" data-g="${g.id}"><span class="d">${d.gym[g.id]?'✓ HECHO':g.d}</span><span class="w">${g.w}</span></button>`).join('');
+  const gs=document.getElementById('gymSt'); gs.className='st'+(gDone===3?' ok':''); gs.textContent=`${gDone}/3`;
+
+  // hábitos
+  const hDone=HABS.filter(h=>d.hab[h.id]).length;
+  document.getElementById('habs').innerHTML=HABS.map(h=>{
+    const on=!!d.hab[h.id], today=h.day!==undefined && (new Date().getDay()===h.day) && !on;
+    let sub=today?'● TOCA HOY':h.s;
+    if(h.id==='peso'){ const e=st.kg.find(x=>x.w===st.week); if(e) sub=`${fmtKg(e.kg)} kg · toca para editar`; else if(!today) sub='Los lunes · toca para apuntar kg'; }
+    return `<button class="chk ${on?'on':''}" data-x="${h.id}"><div><div class="t">${h.t}</div>
+      <div class="s ${today?'hot':''}">${sub}</div></div><div class="box">${on?'✓':''}</div></button>`;}).join('');
+
+  // peso
+  const K=st.kg.slice(-12), kgB=document.getElementById('kgBlk');
+  if(!K.length){ kgB.style.display='none'; }
+  else{
+    kgB.style.display='';
+    const last=K[K.length-1], first=K[0], prev=K[K.length-2];
+    const dPrev=prev?last.kg-prev.kg:null, dTot=last.kg-first.kg;
+    const sg=v=>(v>0?'+':v<0?'−':'±')+fmtKg(Math.abs(v));
+    document.getElementById('kgSt').textContent=K.length+(K.length===1?' registro':' registros');
+    let svg='';
+    if(K.length>1){
+      const vs=K.map(x=>x.kg), mn=Math.min(...vs), mx=Math.max(...vs), r=(mx-mn)||1, W=300, Hh=80;
+      const pts=K.map((x,i)=>[i/(K.length-1)*W, Hh-6-((x.kg-mn)/r)*(Hh-12)]);
+      const path=pts.map((p,i)=>(i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' ');
+      svg=`<svg viewBox="0 0 ${W} ${Hh}" preserveAspectRatio="none">
+        <path d="${path} L${W} ${Hh} L0 ${Hh} Z" fill="#d4ff3a" opacity=".08"/>
+        <path d="${path}" fill="none" stroke="#d4ff3a" stroke-width="2" vector-effect="non-scaling-stroke"/>
+        ${pts.map((p,i)=>`<circle cx="${p[0]}" cy="${p[1]}" r="${i===pts.length-1?3.5:2}" fill="${i===pts.length-1?'#d4ff3a':'#f1f0ea'}" vector-effect="non-scaling-stroke"/>`).join('')}
+      </svg><div class="ax"><span>S${first.w.split('W')[1]}</span><span>máx ${fmtKg(mx)} · mín ${fmtKg(mn)}</span><span>S${last.w.split('W')[1]}</span></div>`;
+    }
+    document.getElementById('kg').innerHTML=`<div class="head"><div class="now">${fmtKg(last.kg)}<span> kg</span></div>
+      <div class="dl">${dPrev!==null?`vs semana ant. <b>${sg(dPrev)}</b><br>desde inicio <b>${sg(dTot)}</b>`:'Primer registro'}</div></div>${svg}`;
+  }
+  const hs=document.getElementById('habSt'); hs.className='st'+(hDone===HABS.length?' ok':''); hs.textContent=`${hDone}/${HABS.length}`;
+
+  // cheat
+  const c=d.cheat, n=Math.max(MAXCHEAT,c);
+  document.getElementById('slots').innerHTML=Array.from({length:n},(_,i)=>
+    `<div class="slot ${i<c?(i>=MAXCHEAT?'over':'used'):''}"></div>`).join('');
+  const cs=document.getElementById('chSt'), cm=document.getElementById('chMsg');
+  if(c>MAXCHEAT){cs.className='st bad';cs.textContent=`${c}/${MAXCHEAT} · PASADO`;cm.className='msg bad';cm.textContent=`Te has pasado ${c-MAXCHEAT} del máximo.`;}
+  else{cs.className='st'+(c<MAXCHEAT?' ok':'');cs.textContent=`${c}/${MAXCHEAT}`;cm.className='msg';
+    cm.textContent=c===MAXCHEAT?'Cupo agotado hasta el lunes.':`Te ${MAXCHEAT-c===1?'queda 1':'quedan '+(MAXCHEAT-c)} esta semana.`;}
+
+  // historial
+  const H=st.hist.slice(-8), hEl=document.getElementById('hist');
+  if(!H.length){hEl.innerHTML='<div class="empty">Aquí aparecerán tus semanas cuando empiece la siguiente.</div>';}
+  else hEl.innerHTML=`<div class="hist">${H.map(x=>`<div class="c ${x.p>=80?'good':''}"><span>${x.p}%</span><i style="height:${Math.max(x.p,3)*0.7}px"></i></div>`).join('')}</div>
+    <div class="hl">${H.map(x=>`<span>S${x.w.split('W')[1]}</span>`).join('')}</div>`;
+}
+
+document.body.addEventListener('click',e=>{
+  const b=e.target.closest('button'); if(!b) return;
+  rollover();
+  const d=st.d;
+  if(b.dataset.h){ d.h=Math.max(0,Math.round((d.h+parseFloat(b.dataset.h))*2)/2); }
+  else if(b.dataset.g){ d.gym[b.dataset.g]=!d.gym[b.dataset.g]; }
+  else if(b.dataset.x==='peso'){
+    const e=st.kg.find(x=>x.w===st.week);
+    const v=prompt(e?'Editar peso de esta semana (kg). Déjalo vacío para borrarlo:':'¿Cuánto pesas hoy? (kg)', e?fmtKg(e.kg):'');
+    if(v===null) return;
+    const kg=parseFloat(v.replace(',','.'));
+    st.kg=st.kg.filter(x=>x.w!==st.week);
+    if(v.trim()==='' || isNaN(kg)){ d.hab.peso=false; }
+    else{ st.kg.push({w:st.week,t:Date.now(),kg}); st.kg.sort((a,b)=>a.w<b.w?-1:1); st.kg=st.kg.slice(-52); d.hab.peso=true; }
+  }
+  else if(b.dataset.x){ d.hab[b.dataset.x]=!d.hab[b.dataset.x]; }
+  else if(b.dataset.c){ d.cheat=Math.max(0,d.cheat+parseInt(b.dataset.c)); }
+  else if(b.id==='reset'){ if(!confirm('¿Poner esta semana a cero?')) return; st.d=blank(); }
+  else return;
+  save(); render();
+});
+
+document.addEventListener('visibilitychange',()=>{ if(!document.hidden){ rollover(); render(); }});
+rollover(); render();
+</script>
+</body>
+</html>
